@@ -6,7 +6,8 @@ const requiredEnvVars = [
   'MONGODB_URI',
   'JWT_ACCESS_SECRET',
   'JWT_REFRESH_SECRET',
-  'TMDB_API_KEY'
+  'TMDB_API_KEY',
+  'OPENAI_API_KEY'
 ];
 
 for (const envVar of requiredEnvVars) {
@@ -22,4 +23,5 @@ export const env = {
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
   tmdbApiKey: process.env.TMDB_API_KEY,
+  openaiApiKey: process.env.OPENAI_API_KEY,
 };

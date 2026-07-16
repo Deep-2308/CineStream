@@ -3,10 +3,11 @@ dotenv.config();
 
 const requiredEnvVars = [
   'PORT',
+  'CLIENT_ORIGIN',
   'MONGODB_URI',
   'JWT_ACCESS_SECRET',
   'JWT_REFRESH_SECRET',
-  'TMDB_API_KEY',
+  'TMDB_ACCESS_TOKEN',
   'OPENAI_API_KEY'
 ];
 
@@ -19,9 +20,10 @@ for (const envVar of requiredEnvVars) {
 
 export const env = {
   port: process.env.PORT,
+  clientOrigin: process.env.CLIENT_ORIGIN,
   mongoUri: process.env.MONGODB_URI,
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
-  tmdbApiKey: process.env.TMDB_API_KEY,
+  tmdbAccessToken: process.env.TMDB_ACCESS_TOKEN,
   openaiApiKey: process.env.OPENAI_API_KEY,
 };

@@ -5,7 +5,7 @@ const BASE_URL = 'https://api.themoviedb.org/3';
 async function fetchWithRetry(url, options = {}, retries = 3, delayMs = 1000) {
   const headers = {
     ...options.headers,
-    'Authorization': `Bearer ${env.tmdbApiKey}`,
+    'Authorization': `Bearer ${env.tmdbAccessToken}`,
     'Accept': 'application/json'
   };
 

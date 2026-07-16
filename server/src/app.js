@@ -6,6 +6,8 @@ import { env } from './config/env.js';
 import authRoutes from './routes/authRoutes.js';
 import catalogueRoutes from './routes/catalogueRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import searchRoutes from './routes/searchRoutes.js';
+import recommendationRoutes from './routes/recommendationRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -18,6 +20,8 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/movies', catalogueRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });

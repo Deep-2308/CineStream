@@ -8,7 +8,9 @@ const requiredEnvVars = [
   'JWT_ACCESS_SECRET',
   'JWT_REFRESH_SECRET',
   'TMDB_ACCESS_TOKEN',
-  'OPENAI_API_KEY'
+  'OPENAI_API_KEY',
+  'REDIS_URL',
+  'ADMIN_RESYNC_SECRET'
 ];
 
 for (const envVar of requiredEnvVars) {
@@ -26,4 +28,6 @@ export const env = {
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
   tmdbAccessToken: process.env.TMDB_ACCESS_TOKEN,
   openaiApiKey: process.env.OPENAI_API_KEY,
+  redisUrl: process.env.REDIS_URL,
+  adminResyncSecret: process.env.ADMIN_RESYNC_SECRET
 };

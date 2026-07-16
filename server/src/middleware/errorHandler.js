@@ -7,6 +7,10 @@ export const errorHandler = (err, req, res, next) => {
   let code = err.code || 'INTERNAL_ERROR';
 
   // Explicitly map Mongo duplicate-key error to 409
+  if (err.name === 'CastError') {
+    return res.status(400).json({ message: 'Invalid ID format' });
+  }
+
   if (err.code === 11000) {
     statusCode = 409;
     message = 'Duplicate field value entered';

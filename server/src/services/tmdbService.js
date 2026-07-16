@@ -46,6 +46,10 @@ export const tmdbService = {
     return fetchWithRetry(`${BASE_URL}/movie/top_rated?language=en-US&page=${page}`);
   },
   
+  fetchNowPlaying: async (page = 1) => {
+    return fetchWithRetry(`${BASE_URL}/movie/now_playing?language=en-US&page=${page}`);
+  },
+  
   discover: async (page = 1, filters = {}) => {
     const params = new URLSearchParams({
       language: 'en-US',

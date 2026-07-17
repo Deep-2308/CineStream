@@ -10,6 +10,7 @@ import { useCanHover } from '../../hooks/useCanHover.js';
 import { useHoverIntent } from '../../hooks/useHoverIntent.js';
 import { usePlayerStore } from '../../store/playerStore.js';
 import Image from '../common/Image.jsx';
+import WatchlistButton from './WatchlistButton.jsx';
 
 const PosterCard = memo(({ movie }) => {
   const canHover = useCanHover();
@@ -84,6 +85,11 @@ const PosterCard = memo(({ movie }) => {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Watchlist Button — always mount, it handles its own auth gating */}
+        <div className="absolute top-2 right-2 z-10 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200">
+          <WatchlistButton movieId={movie._id} size="icon" />
+        </div>
       </motion.div>
     </Link>
   );

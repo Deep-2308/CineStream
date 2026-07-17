@@ -24,4 +24,6 @@ export const queryKeys = {
     list:   (params)        => ['originals', 'list', params],
     detail: (id)            => ['originals', id],
   },
+  continueWatching: (params) => ['continueWatching', params],
+  profile: () => ['profile'],
 };

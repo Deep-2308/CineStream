@@ -14,15 +14,15 @@ async function main() {
   const addIds = (ids) => ids.forEach(id => uniqueTmdbIds.add(id));
 
   // Fetch from Popular, Top Rated, and Discover
-  const popularIds = await syncService.fetchPages(tmdbService.fetchPopular, 1, 100, 'Popular');
+  const popularIds = await syncService.fetchPages(tmdbService.fetchPopular, 1, 2, 'Popular');
   addIds(popularIds);
   console.log(`Unique IDs after Popular: ${uniqueTmdbIds.size}`);
   
-  const topRatedIds = await syncService.fetchPages(tmdbService.fetchTopRated, 1, 100, 'Top Rated');
+  const topRatedIds = await syncService.fetchPages(tmdbService.fetchTopRated, 1, 2, 'Top Rated');
   addIds(topRatedIds);
   console.log(`Unique IDs after Top Rated: ${uniqueTmdbIds.size}`);
   
-  const discoverIds = await syncService.fetchPages(p => tmdbService.discover(p, { include_adult: false, 'vote_count.gte': 100 }), 1, 100, 'Discover');
+  const discoverIds = await syncService.fetchPages(p => tmdbService.discover(p, { include_adult: false, 'vote_count.gte': 100 }), 1, 2, 'Discover');
   addIds(discoverIds);
   console.log(`Total Unique IDs to process: ${uniqueTmdbIds.size}`);
 
@@ -50,7 +50,7 @@ Vector Search Index in the MongoDB Atlas UI.
 {
   "fields": [
     {
-      "numDimensions": 1536,
+      "numDimensions": ${env.embeddingDimensions},
       "path": "embedding",
       "similarity": "cosine",
       "type": "vector"

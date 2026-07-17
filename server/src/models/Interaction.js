@@ -19,6 +19,11 @@ const interactionSchema = new mongoose.Schema(
 // Compound indexes
 interactionSchema.index({ user: 1, movie: 1 });
 interactionSchema.index({ user: 1, createdAt: -1 });
+// Partial unique index: only one rating per user per movie
+interactionSchema.index(
+  { user: 1, movie: 1, type: 1 },
+  { unique: true, partialFilterExpression: { type: 'rating' } }
+);
 
 const Interaction = mongoose.model('Interaction', interactionSchema);
 

@@ -21,12 +21,12 @@ export default function Image({ src, alt, className, fallbackClassName = '' }) {
   }
 
   return (
-    <>
-      {!isLoaded && <Skeleton className={className} />}
+    <div className={`relative overflow-hidden ${className}`}>
+      {!isLoaded && <Skeleton className="absolute inset-0 w-full h-full" />}
       <img
         src={src}
         alt={alt}
-        className={`${className} ${!isLoaded ? 'hidden' : 'block'}`}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${!isLoaded ? 'opacity-0' : 'opacity-100'}`}
         loading="lazy"
         onLoad={() => setIsLoaded(true)}
         onError={() => {
@@ -34,6 +34,6 @@ export default function Image({ src, alt, className, fallbackClassName = '' }) {
           setHasError(true);
         }}
       />
-    </>
+    </div>
   );
 }

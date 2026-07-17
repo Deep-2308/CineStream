@@ -1,6 +1,7 @@
 import { tmdbService } from './tmdbService.js';
 import { embeddingService } from './embeddingService.js';
 import Movie from '../models/Movie.js';
+import { env } from '../config/env.js';
 import { invalidateCache } from '../config/redis.js';
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -69,13 +70,14 @@ export const syncService = {
           embedding: { $exists: true, $ne: [] } 
         });
 
+        // Upsert standard fields immediately
+        await Movie.updateOne(
+          { tmdbId: details.id },
+          { $set: movieData },
+          { upsert: true }
+        );
+
         if (existsWithEmbedding) {
-          // Upsert standard fields without touching the embedding
-          await Movie.updateOne(
-            { tmdbId: details.id },
-            { $set: movieData },
-            { upsert: true }
-          );
           updatedExisting++;
         } else {
           // Queue for embedding
@@ -103,7 +105,7 @@ export const syncService = {
     let embeddingsGenerated = 0;
     // Batch generate embeddings and Bulk Write
     if (moviesToEmbed.length > 0) {
-      // Changed to 50 due to OpenAI quota / rate limiting failures in previous run
+      // Changed to 50 due to AI provider quota / rate limiting failures in previous run
       const BATCH_SIZE = 50; 
       
       for (let i = 0; i < moviesToEmbed.length; i += BATCH_SIZE) {
@@ -130,9 +132,10 @@ export const syncService = {
           }));
 
           await Movie.bulkWrite(bulkOps);
-          await sleep(500); // Breathe between big batch writes
+          await sleep(1000); // Breathe between big batch writes
         } catch (err) {
           console.error(`Failed to generate embeddings or write batch starting at index ${i}:`, err.message);
+          // Don't abort sync; the movie is already saved without an embedding.
         }
       }
       console.log(`Generated and saved ${embeddingsGenerated} new embeddings.`);

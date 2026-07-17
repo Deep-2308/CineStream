@@ -1,9 +1,4 @@
-import OpenAI from 'openai';
-import { env } from '../config/env.js';
-
-const openai = new OpenAI({
-  apiKey: env.openaiApiKey,
-});
+import { aiClient } from '../lib/ai/client.js';
 
 export const embeddingService = {
   /**
@@ -15,16 +10,9 @@ export const embeddingService = {
     if (!texts || texts.length === 0) return [];
 
     try {
-      const response = await openai.embeddings.create({
-        model: 'text-embedding-3-small',
-        input: texts,
-        dimensions: 1536,
-      });
-
-      // The response.data array is in the same order as the input
-      return response.data.map(item => item.embedding);
+      return await aiClient.generateEmbeddings(texts);
     } catch (error) {
-      console.error('[OpenAI] Failed to generate embeddings:', error.message);
+      console.error('[Gemini] Failed to generate embeddings:', error.message);
       throw error;
     }
   },

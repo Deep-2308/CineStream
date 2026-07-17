@@ -12,12 +12,16 @@ import Skeleton from '../components/ui/Skeleton.jsx';
 import Image from '../components/common/Image.jsx';
 import Button from '../components/ui/Button.jsx';
 import MovieRow from '../components/movie/MovieRow.jsx';
+import WatchlistButton from '../components/movie/WatchlistButton.jsx';
+import RatingStars from '../components/movie/RatingStars.jsx';
+import { useAuthStore } from '../store/authStore.js';
 
 const TrailerModal = lazy(() => import('../components/player/TrailerModal.jsx'));
 
 export default function MovieDetailPage() {
   const { id } = useParams();
   const [trailerOpen, setTrailerOpen] = useState(false);
+  const { isAuthenticated } = useAuthStore();
 
   // 1. Fetch Movie
   const {
@@ -158,7 +162,20 @@ export default function MovieDetailPage() {
                     </Button>
                   </span>
                 )}
+                
+                {/* Watchlist Button */}
+                {isAuthenticated && (
+                  <WatchlistButton movieId={movie._id} size="full" />
+                )}
               </div>
+              
+              {/* Rating Stars */}
+              {isAuthenticated && (
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="text-sm text-txt-muted font-medium">Rate this movie:</span>
+                  <RatingStars movieId={movie._id} />
+                </div>
+              )}
             </div>
           </div>
         </div>

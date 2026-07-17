@@ -67,15 +67,21 @@ const HeroBanner = memo(({ movie }) => {
           </p>
 
           <div className="flex items-center gap-3 mt-2">
-            <Button 
-              variant="primary" 
-              size="lg" 
-              className="gap-2 px-6"
-              onClick={() => alert("Video playback placeholder")}
-            >
-              <Play size={20} className="fill-current" />
-              Play
-            </Button>
+            {movie.hlsManifestUrl ? (
+              <Link to={`/originals/${movie._id}`} tabIndex={-1}>
+                <Button variant="primary" size="lg" className="gap-2 px-6">
+                  <Play size={20} className="fill-current" />
+                  Play
+                </Button>
+              </Link>
+            ) : (
+              <Link to={`/movie/${movie._id}`} tabIndex={-1}>
+                <Button variant="primary" size="lg" className="gap-2 px-6">
+                  <Play size={20} className="fill-current" />
+                  Play
+                </Button>
+              </Link>
+            )}
             
             <Link to={`/movie/${movie._id}`} tabIndex={-1}>
               <Button variant="secondary" size="lg" className="gap-2 px-6 bg-surface/50 hover:bg-surface backdrop-blur-md">

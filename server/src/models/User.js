@@ -8,7 +8,9 @@ const userSchema = new mongoose.Schema(
     refreshTokenHash: { type: String, select: false },
     watchlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }],
     preferences: {
-      favoriteGenres: [{ type: String }],
+      favoriteGenres:  [{ type: String }],
+      favoriteLanguage: { type: String },
+      favoriteDecade:   { type: String }, // e.g. '1990s'
     },
   },
   { timestamps: true }

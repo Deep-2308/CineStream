@@ -7,7 +7,9 @@ const BASE = 'https://image.tmdb.org/t/p';
  * @returns {string|null}
  */
 export const posterUrl = (path, size = 'w342') => {
-  return path ? `${BASE}/${size}${path}` : null;
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${BASE}/${size}${path}`;
 };
 
 /**
@@ -17,5 +19,7 @@ export const posterUrl = (path, size = 'w342') => {
  * @returns {string|null}
  */
 export const backdropUrl = (path, size = 'w1280') => {
-  return path ? `${BASE}/${size}${path}` : null;
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `${BASE}/${size}${path}`;
 };

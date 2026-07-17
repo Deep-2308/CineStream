@@ -3,13 +3,14 @@ import { useAuthStore } from '../store/authStore.js';
 import { queryKeys } from '../lib/queryKeys.js';
 import { movieApi } from '../services/movieApi.js';
 import { recommendationApi } from '../services/recommendationApi.js';
+import { interactionApi } from '../services/interactionApi.js';
 import PageTransition from '../components/common/PageTransition.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
 import HeroBanner from '../components/movie/HeroBanner.jsx';
 import MovieRow from '../components/movie/MovieRow.jsx';
 
 export default function HomePage() {
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
 
   // 1. Trending Query (used for Hero and Trending Row)
   const {
@@ -32,7 +33,17 @@ export default function HomePage() {
     queryFn: () => recommendationApi.getHome({ limit: 20 }),
   });
 
-  // 3. Genre Queries (using exact TMDB strings)
+  // 3. Continue Watching Query
+  const {
+    data: continueData,
+    isLoading: continueLoading,
+  } = useQuery({
+    queryKey: queryKeys.continueWatching({ limit: 20 }),
+    queryFn: () => interactionApi.getContinueWatching(20),
+    enabled: isAuthenticated,
+  });
+
+  // 4. Genre Queries (using exact TMDB strings)
   const genres = ['Action', 'Science Fiction', 'Comedy'];
   
   // We'll map through these below, but using useQuery in a loop is technically a violation of rules of hooks, 
@@ -60,6 +71,7 @@ export default function HomePage() {
   const heroMovie = trendingItems[0];
   const trendingRowMovies = trendingItems.slice(1);
   const recItems = recData?.items || [];
+  const continueItems = continueData?.items || [];
 
   return (
     <PageTransition>
@@ -71,6 +83,15 @@ export default function HomePage() {
       ) : null}
 
       <div className="pb-12 pt-8 md:-mt-24 relative z-20">
+        {/* Continue Watching Row */}
+        {isAuthenticated && continueItems.length > 0 && (
+          <MovieRow 
+            title="Continue Watching" 
+            movies={continueItems} 
+            isLoading={continueLoading} 
+          />
+        )}
+
         {/* Recommended Row */}
         <MovieRow 
           title={user ? "Recommended For You" : "Trending"} 

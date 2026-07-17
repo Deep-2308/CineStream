@@ -8,7 +8,10 @@ const requiredEnvVars = [
   'JWT_ACCESS_SECRET',
   'JWT_REFRESH_SECRET',
   'TMDB_ACCESS_TOKEN',
-  'OPENAI_API_KEY',
+  'GEMINI_API_KEY',
+  'GEMINI_CHAT_MODEL',
+  'GEMINI_EMBEDDING_MODEL',
+  'EMBEDDING_DIMENSIONS',
   'REDIS_URL',
   'ADMIN_RESYNC_SECRET'
 ];
@@ -27,7 +30,10 @@ export const env = {
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
   tmdbAccessToken: process.env.TMDB_ACCESS_TOKEN,
-  openaiApiKey: process.env.OPENAI_API_KEY,
+  geminiApiKey: process.env.GEMINI_API_KEY,
+  geminiChatModel: process.env.GEMINI_CHAT_MODEL,
+  geminiEmbeddingModel: process.env.GEMINI_EMBEDDING_MODEL,
+  embeddingDimensions: parseInt(process.env.EMBEDDING_DIMENSIONS, 10) || 768,
   redisUrl: process.env.REDIS_URL,
   adminResyncSecret: process.env.ADMIN_RESYNC_SECRET
 };

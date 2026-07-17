@@ -1,16 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, User, LogOut, Menu, X } from 'lucide-react';
+import { Search, User, LogOut, Menu, X, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useScroll } from '../../hooks/useScroll.js';
 import { useAuthStore } from '../../store/authStore.js';
 import { cn } from '../../lib/utils.js';
 import Button from '../ui/Button.jsx';
+import AskCineStream from '../../features/askCineStream/AskCineStream.jsx';
 
 export default function Navbar() {
   const scrolled = useScroll(20);
   const { isAuthenticated, user } = useAuthStore();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [askOpen, setAskOpen] = useState(false);
 
   const navLinks = [
     { label: 'Home', to: '/' },
@@ -50,6 +52,15 @@ export default function Navbar() {
             aria-label="Search movies"
           >
             <Search className="h-5 w-5" />
+          </button>
+
+          <button
+            onClick={() => setAskOpen(true)}
+            className="rounded-full p-2 text-primary transition-colors hover:bg-surface flex items-center gap-2 font-medium"
+            aria-label="Ask CineStream"
+          >
+            <Sparkles className="h-5 w-5 fill-primary" />
+            <span className="text-sm">Ask AI</span>
           </button>
 
           {isAuthenticated ? (
@@ -105,6 +116,13 @@ export default function Navbar() {
           >
             Search
           </Link>
+          <button
+            onClick={() => { setAskOpen(true); setMobileOpen(false); }}
+            className="w-full text-left py-3 text-sm font-medium text-primary hover:text-primary-hover flex items-center gap-2"
+          >
+            <Sparkles className="h-4 w-4 fill-primary" />
+            Ask AI
+          </button>
           {isAuthenticated ? (
             <>
               <Link
@@ -127,6 +145,9 @@ export default function Navbar() {
           )}
         </div>
       )}
+
+      {/* Slide-over UI */}
+      <AskCineStream isOpen={askOpen} onClose={() => setAskOpen(false)} />
     </nav>
   );
 }

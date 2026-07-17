@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient.js';
 import { bootstrapAuth } from './lib/apiClient.js';
@@ -15,6 +15,7 @@ const HomePage = lazy(() => import('./pages/HomePage.jsx'));
 const MovieDetailPage = lazy(() => import('./pages/MovieDetailPage.jsx'));
 const SearchPage = lazy(() => import('./pages/SearchPage.jsx'));
 const WatchlistPage = lazy(() => import('./pages/WatchlistPage.jsx'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage.jsx'));
 const OriginalsPage = lazy(() => import('./pages/OriginalsPage.jsx'));
 const OriginalPlayerPage = lazy(() => import('./pages/OriginalPlayerPage.jsx'));
 const LoginPage = lazy(() => import('./pages/LoginPage.jsx'));
@@ -56,6 +57,15 @@ export default function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <ErrorBoundary><ProfilePage /></ErrorBoundary>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
             </Routes>
           </Suspense>

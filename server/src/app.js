@@ -9,6 +9,8 @@ import adminRoutes from './routes/adminRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import recommendationRoutes from './routes/recommendationRoutes.js';
 import originalsRoutes from './routes/originalsRoutes.js';
+import interactionRoutes from './routes/interactionRoutes.js';
+import askRoutes from './routes/askRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -24,6 +26,9 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/originals', originalsRoutes);
+app.use('/api/ask', askRoutes);
+// Interaction routes use /api prefix; paths defined in the router itself
+app.use('/api', interactionRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });

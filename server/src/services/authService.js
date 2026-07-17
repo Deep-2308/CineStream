@@ -95,7 +95,13 @@ export const authService = {
     let user = await User.findOne({ googleId });
     let isNewUser = false;
 
-    if (!user) {
+    if (user) {
+      // Always refresh avatar on every Google sign-in (URLs can rotate)
+      if (avatarUrl && user.avatarUrl !== avatarUrl) {
+        user.avatarUrl = avatarUrl;
+        await user.save();
+      }
+    } else {
       // 2. Try finding by email (Account Linking)
       user = await User.findOne({ email: normalizedEmail });
       if (user) {

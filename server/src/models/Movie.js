@@ -17,6 +17,7 @@ const movieSchema = new mongoose.Schema(
     ratingCount: { type: Number, default: 0 },
     ratingSum: { type: Number, default: 0 },
     moodTags: { type: [String], index: true },
+    originalLanguage: { type: String, index: true },
   },
   { timestamps: true }
 );

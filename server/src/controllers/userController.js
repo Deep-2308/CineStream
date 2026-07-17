@@ -20,8 +20,12 @@ export const updateProfile = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { name, preferences } = req.body;
+  const { name, preferences, onboardingCompleted } = req.body;
   const update = {};
+
+  if (onboardingCompleted !== undefined) {
+    update.onboardingCompleted = Boolean(onboardingCompleted);
+  }
 
   if (name !== undefined) {
     update.name = name.trim().slice(0, 50);
@@ -40,6 +44,20 @@ export const updateProfile = async (req, res) => {
       // Validate decade value
       const decade = preferences.favoriteDecade;
       update['preferences.favoriteDecade'] = ALLOWED_DECADES.includes(decade) ? decade : undefined;
+    }
+    if (Array.isArray(preferences.languages)) {
+      update['preferences.languages'] = preferences.languages.filter(l => typeof l === 'string');
+    }
+    if (preferences.contentPrefs) {
+      if (typeof preferences.contentPrefs.eraFrom === 'number') {
+        update['preferences.contentPrefs.eraFrom'] = preferences.contentPrefs.eraFrom;
+      }
+      if (typeof preferences.contentPrefs.runtimeMax === 'number') {
+        update['preferences.contentPrefs.runtimeMax'] = preferences.contentPrefs.runtimeMax;
+      }
+    }
+    if (typeof preferences.accentColor === 'string') {
+      update['preferences.accentColor'] = preferences.accentColor;
     }
   }
 

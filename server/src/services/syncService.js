@@ -62,6 +62,7 @@ export const syncService = {
           trailerKey,
           voteAverage: details.vote_average,
           popularity: details.popularity,
+          originalLanguage: details.original_language,
         };
 
         // Check embedding using the correct query for select:false fields

@@ -115,9 +115,25 @@ export const recommendationService = {
     }
   },
 
-  getTrendingFallback: async (limit) => {
-    const res = await catalogueService.getTrending({ limit });
-    return res.items;
+  getTrendingFallback: async (limit, languages = null) => {
+    let matchStage = null;
+    if (languages && languages.length > 0) {
+      matchStage = { originalLanguage: { $in: languages } };
+    }
+    
+    if (matchStage) {
+      // If we need a custom match, we have to bypass catalogueService's simple trending 
+      // and do a direct query so we can filter by language.
+      const items = await Movie.find(matchStage)
+        .sort({ popularity: -1 })
+        .limit(limit)
+        .select('-embedding -__v')
+        .lean();
+      return items;
+    } else {
+      const res = await catalogueService.getTrending({ limit });
+      return res.items;
+    }
   },
 
   /**
@@ -139,9 +155,29 @@ export const recommendationService = {
       return recommendationService.getTrendingFallback(limit);
     }
 
+    const userObj = await mongoose.model('User').findById(userId).lean();
+    const userLanguages = userObj?.preferences?.languages || null;
+    const favoriteGenres = userObj?.preferences?.favoriteGenres || [];
+
     const interactionCount = await Interaction.countDocuments({ user: userId });
     if (interactionCount < 3) {
-      return recommendationService.getTrendingFallback(limit);
+      if (favoriteGenres.length > 0) {
+        // Use catalogueService genre fetch logic for the first favorite genre
+        // OR we can do an aggregation to blend favorite genres, but simplest is a query:
+        const items = await Movie.find({ genres: { $in: favoriteGenres } })
+          .sort({ popularity: -1 })
+          .limit(limit)
+          .select('-embedding -__v')
+          .lean();
+        
+        // If not enough items, pad with trending
+        if (items.length < limit) {
+          const trendingPadding = await recommendationService.getTrendingFallback(limit - items.length, userLanguages);
+          return enforceDiversity([...items, ...trendingPadding], limit);
+        }
+        return enforceDiversity(items, limit);
+      }
+      return recommendationService.getTrendingFallback(limit, userLanguages);
     }
 
     // Determine target allocations
@@ -185,7 +221,7 @@ export const recommendationService = {
     // 3. Trending Fill
     if (blended.length < limit) {
       const remainingSlots = limit - blended.length;
-      const trendingRaw = await recommendationService.getTrendingFallback(limit * 2);
+      const trendingRaw = await recommendationService.getTrendingFallback(limit * 2, userLanguages);
       addMovies(trendingRaw, limit * 2); // Dump as much as needed to reach the final cap
     }
 

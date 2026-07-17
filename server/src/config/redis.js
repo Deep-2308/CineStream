@@ -7,6 +7,7 @@ try {
   redisClient = new Redis(env.redisUrl, {
     maxRetriesPerRequest: 1,
     enableOfflineQueue: false,
+    enableReadyCheck: false,
     retryStrategy(times) {
       // Exponential backoff with a cap, but limit max retries to avoid stalling
       const delay = Math.min(times * 50, 2000);

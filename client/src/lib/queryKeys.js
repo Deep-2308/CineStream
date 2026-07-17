@@ -19,4 +19,9 @@ export const queryKeys = {
   auth: {
     me: () => ['auth', 'me'],
   },
+  originals: {
+    all:    ()              => ['originals'],
+    list:   (params)        => ['originals', 'list', params],
+    detail: (id)            => ['originals', id],
+  },
 };

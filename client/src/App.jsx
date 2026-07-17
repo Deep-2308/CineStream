@@ -7,6 +7,7 @@ import { useAuthStore } from './store/authStore.js';
 import AppLayout from './components/layout/AppLayout.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute.jsx';
 import ErrorBoundary from './components/common/ErrorBoundary.jsx';
+import ScrollToTop from './components/common/ScrollToTop.jsx';
 import Spinner from './components/ui/Spinner.jsx';
 
 // Lazy-loaded pages
@@ -15,6 +16,7 @@ const MovieDetailPage = lazy(() => import('./pages/MovieDetailPage.jsx'));
 const SearchPage = lazy(() => import('./pages/SearchPage.jsx'));
 const WatchlistPage = lazy(() => import('./pages/WatchlistPage.jsx'));
 const OriginalsPage = lazy(() => import('./pages/OriginalsPage.jsx'));
+const OriginalPlayerPage = lazy(() => import('./pages/OriginalPlayerPage.jsx'));
 const LoginPage = lazy(() => import('./pages/LoginPage.jsx'));
 const SignupPage = lazy(() => import('./pages/SignupPage.jsx'));
 
@@ -32,6 +34,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <ScrollToTop />
         {/* Outer ErrorBoundary — last resort, catches everything */}
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
@@ -42,6 +45,7 @@ export default function App() {
                 <Route path="/movie/:id" element={<ErrorBoundary><MovieDetailPage /></ErrorBoundary>} />
                 <Route path="/search" element={<ErrorBoundary><SearchPage /></ErrorBoundary>} />
                 <Route path="/originals" element={<ErrorBoundary><OriginalsPage /></ErrorBoundary>} />
+                <Route path="/originals/:id" element={<ErrorBoundary><OriginalPlayerPage /></ErrorBoundary>} />
                 <Route path="/login" element={<ErrorBoundary><LoginPage /></ErrorBoundary>} />
                 <Route path="/signup" element={<ErrorBoundary><SignupPage /></ErrorBoundary>} />
                 <Route

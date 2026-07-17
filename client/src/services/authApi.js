@@ -7,6 +7,9 @@ export const authApi = {
   login: (email, password) =>
     apiClient.post('/api/auth/login', { email, password }).then(r => r.data),
 
+  googleAuth: (credential) =>
+    apiClient.post('/api/auth/google', { credential }).then(r => r.data),
+
   logout: () =>
     apiClient.post('/api/auth/logout').then(r => r.data),
 

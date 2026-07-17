@@ -1,4 +1,5 @@
 import { validationResult } from 'express-validator';
+import { OAuth2Client } from 'google-auth-library';
 import { authService } from '../services/authService.js';
 import User from '../models/User.js';
 
@@ -39,6 +40,35 @@ export const authController = {
 
     res.cookie('refreshToken', refreshToken, getCookieOptions());
     res.json({ accessToken, user });
+  },
+
+  google: async (req, res) => {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ error: { message: 'Missing Google credential' } });
+    }
+
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    let payload;
+    
+    try {
+      const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      payload = ticket.getPayload();
+    } catch (error) {
+      return res.status(401).json({ error: { message: 'Invalid Google credential', details: error.message } });
+    }
+
+    if (payload.email_verified !== true) {
+      return res.status(403).json({ error: { message: 'Google email is not verified. Cannot securely link account.' } });
+    }
+
+    const { accessToken, refreshToken, user, isNewUser } = await authService.googleSignOn(payload);
+
+    res.cookie('refreshToken', refreshToken, getCookieOptions());
+    res.json({ accessToken, user, isNewUser });
   },
 
   refresh: async (req, res) => {

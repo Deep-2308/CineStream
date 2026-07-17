@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../hooks/useAuth.js';
 import PageTransition from '../components/common/PageTransition.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -9,7 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -26,6 +27,23 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError('');
+    setSubmitting(true);
+    try {
+      const data = await googleLogin(credentialResponse.credential);
+      if (data.isNewUser) {
+        navigate('/onboarding');
+      } else {
+        navigate('/');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.response?.data?.error?.message || 'Google Login failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <PageTransition>
       <div className="flex min-h-[70vh] items-center justify-center px-4">
@@ -37,6 +55,24 @@ export default function LoginPage() {
               {error}
             </div>
           )}
+
+          <div className="mb-6 flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError('Google Login was unsuccessful')}
+              theme="filled_black"
+              shape="pill"
+            />
+          </div>
+
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-surface" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-surface px-2 text-txt-muted">Or continue with</span>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

@@ -20,6 +20,7 @@ const OriginalsPage = lazy(() => import('./pages/OriginalsPage.jsx'));
 const OriginalPlayerPage = lazy(() => import('./pages/OriginalPlayerPage.jsx'));
 const LoginPage = lazy(() => import('./pages/LoginPage.jsx'));
 const SignupPage = lazy(() => import('./pages/SignupPage.jsx'));
+const OnboardingPage = lazy(() => import('./pages/OnboardingPage.jsx'));
 
 const PageLoader = () => (
   <div className="flex min-h-[60vh] items-center justify-center">
@@ -62,6 +63,14 @@ export default function App() {
                   element={
                     <ProtectedRoute>
                       <ErrorBoundary><ProfilePage /></ErrorBoundary>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/onboarding"
+                  element={
+                    <ProtectedRoute>
+                      <ErrorBoundary><OnboardingPage /></ErrorBoundary>
                     </ProtectedRoute>
                   }
                 />

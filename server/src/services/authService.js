@@ -60,6 +60,13 @@ export const authService = {
       throw err;
     }
 
+    if (!user.passwordHash) {
+      const err = new Error(user.authProviders?.includes('google') ? 'This account uses Google Sign-In' : 'Invalid email or password');
+      err.statusCode = 401;
+      err.code = 'INVALID_CREDENTIALS';
+      throw err;
+    }
+
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       const err = new Error('Invalid email or password');
@@ -78,6 +85,50 @@ export const authService = {
     delete userObj.refreshTokenHash;
 
     return { accessToken, refreshToken, user: userObj };
+  },
+
+  googleSignOn: async (payload) => {
+    const { sub: googleId, email, name, picture: avatarUrl } = payload;
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // 1. Try finding by Google ID
+    let user = await User.findOne({ googleId });
+    let isNewUser = false;
+
+    if (!user) {
+      // 2. Try finding by email (Account Linking)
+      user = await User.findOne({ email: normalizedEmail });
+      if (user) {
+        user.googleId = googleId;
+        if (avatarUrl) user.avatarUrl = avatarUrl;
+        if (!user.authProviders.includes('google')) {
+          user.authProviders.push('google');
+        }
+        await user.save();
+      } else {
+        // 3. Create new user
+        isNewUser = true;
+        user = await User.create({
+          name: name || email.split('@')[0],
+          email: normalizedEmail,
+          googleId,
+          avatarUrl,
+          authProviders: ['google'],
+          onboardingCompleted: false
+        });
+      }
+    }
+
+    const { accessToken, refreshToken, refreshTokenHash } = await generateTokens(user._id);
+    
+    user.refreshTokenHash = refreshTokenHash;
+    await user.save();
+
+    const userObj = user.toObject();
+    delete userObj.passwordHash;
+    delete userObj.refreshTokenHash;
+
+    return { accessToken, refreshToken, user: userObj, isNewUser };
   },
 
   refresh: async (refreshToken) => {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../hooks/useAuth.js';
 import PageTransition from '../components/common/PageTransition.jsx';
 import Button from '../components/ui/Button.jsx';
@@ -10,7 +11,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const { signup } = useAuth();
+  const { signup, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -21,7 +22,28 @@ export default function SignupPage() {
       await signup(name, email, password);
       navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.message || err.response?.data?.error?.message || 'Signup failed');
+      if (err.response?.data?.error?.code === 'DUPLICATE_EMAIL') {
+        setError('Email already in use. If you previously signed up with Google, please use Google Sign-In.');
+      } else {
+        setError(err.response?.data?.message || err.response?.data?.error?.message || 'Signup failed');
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError('');
+    setSubmitting(true);
+    try {
+      const data = await googleLogin(credentialResponse.credential);
+      if (data.isNewUser) {
+        navigate('/onboarding');
+      } else {
+        navigate('/');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.response?.data?.error?.message || 'Google Sign-Up failed');
     } finally {
       setSubmitting(false);
     }
@@ -38,6 +60,25 @@ export default function SignupPage() {
               {error}
             </div>
           )}
+
+          <div className="mb-6 flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError('Google Sign-Up was unsuccessful')}
+              theme="filled_black"
+              shape="pill"
+              text="signup_with"
+            />
+          </div>
+
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-surface" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-surface px-2 text-txt-muted">Or sign up with email</span>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

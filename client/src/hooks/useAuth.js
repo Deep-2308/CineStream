@@ -12,6 +12,12 @@ export function useAuth() {
     return data;
   }, [setAuth]);
 
+  const googleLogin = useCallback(async (credential) => {
+    const data = await authApi.googleAuth(credential);
+    setAuth(data.accessToken, data.user);
+    return data;
+  }, [setAuth]);
+
   const signup = useCallback(async (name, email, password) => {
     const data = await authApi.signup(name, email, password);
     return data;
@@ -25,5 +31,5 @@ export function useAuth() {
     }
   }, [clearAuth]);
 
-  return { user, accessToken, isAuthenticated, loading, hydrated, login, signup, logout };
+  return { user, accessToken, isAuthenticated, loading, hydrated, login, googleLogin, signup, logout };
 }

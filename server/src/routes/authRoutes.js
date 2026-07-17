@@ -19,6 +19,7 @@ const loginValidation = [
 
 router.post('/signup', signupValidation, asyncHandler(authController.signup));
 router.post('/login', loginValidation, asyncHandler(authController.login));
+router.post('/google', asyncHandler(authController.google));
 router.post('/refresh', asyncHandler(authController.refresh));
 router.post('/logout', authenticate, asyncHandler(authController.logout));
 router.get('/me', authenticate, asyncHandler(authController.me));

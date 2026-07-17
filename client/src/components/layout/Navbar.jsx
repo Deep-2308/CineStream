@@ -110,7 +110,7 @@ export default function Navbar() {
                 aria-label="User menu"
               >
                 {user?.avatarUrl ? (
-                  <img src={user.avatarUrl} alt={user.name} className="h-full w-full object-cover" />
+                  <img src={user.avatarUrl} alt={user.name} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
                 ) : (
                   <span className="text-sm font-bold text-primary">
                     {user?.name?.charAt(0).toUpperCase() || 'U'}
